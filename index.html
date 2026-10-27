@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#18202b">
+<title>myTracker</title>
+<style>
+:root{--bg:#f4f6f9;--panel:#fff;--ink:#17212f;--muted:#657184;--line:#dfe5ec;--accent:#2457d6;--shadow:0 4px 16px #17212f0a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:8px 11px;background:#e9eef6;color:var(--ink);font-weight:600}button.primary{background:var(--accent);color:white}button.ghost{background:transparent;border:1px solid var(--line)}button.danger{color:#a52c35;background:#fff0f0}.app{max-width:1100px;margin:auto;padding:12px 12px 28px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.brand{display:flex;align-items:center;gap:9px}.logo{background:#18202b;color:white;border-radius:11px;width:38px;height:38px;display:grid;place-items:center;font-weight:900;font-size:18px}.brand h1{font-size:20px;margin:0;letter-spacing:-.5px}.brand p{margin:0;color:var(--muted);font-size:12px}.top-actions{display:flex;gap:4px;flex-wrap:wrap;align-items:center}.top-actions button{font-size:11px;padding:6px 8px;color:var(--muted);background:transparent;border:1px solid transparent}.top-actions button:hover{background:#eef1f5;color:var(--ink)}.layout{display:grid;grid-template-columns:1fr;gap:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}.main{min-width:0}
+
+/* Horizontal Category Pill Bar */
+.category-pill-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}.category-pill-bar::-webkit-scrollbar{display:none}.cat-pill{display:flex;align-items:center;gap:6px;background:white;border:1px solid var(--line);padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;font-size:13px;flex:none}.cat-pill.active{background:#f0f4ff;border-color:var(--accent);color:var(--accent)}.cat-dot{width:8px;height:8px;border-radius:50%}
+
+.hero-actions{display:flex;gap:6px;flex-wrap:wrap}.tabs{display:flex;gap:4px;padding:4px;background:#e9edf3;border-radius:10px;margin-bottom:12px;width:max-content;max-width:100%}.tab{background:transparent;padding:7px 11px;color:#596577;font-size:13px}.tab.active{background:white;box-shadow:0 1px 3px #17212f12;color:var(--ink)}.content{padding:14px}.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.calendar-head h3{margin:0;font-size:16px}.month-controls{display:flex;align-items:center;gap:6px}.month-controls button{padding:5px 8px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekday{text-align:center;font-size:11px;color:var(--muted);font-weight:750;padding:4px 0}.day{min-height:82px;border:1px solid var(--line);border-radius:9px;background:white;text-align:left;padding:6px;min-width:0;overflow:hidden}.day.outside{opacity:.35;background:#f7f8fa}.day.today{border-color:#7899f6;box-shadow:inset 0 0 0 1px #7899f6}.day.selected{outline:2px solid var(--accent);outline-offset:1px}.day-num{font-size:11px;font-weight:800;display:flex;justify-content:space-between;gap:2px}.mark{font-size:9px;color:white;border-radius:4px;padding:1px 3px;white-space:nowrap}.day-items{margin-top:4px;display:grid;gap:2px}.day-item{font-size:9px;line-height:1.2;padding:2px 3px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#edf2ff}.simple-mark{font-size:15px;font-weight:900;color:#16865b}.below-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}@media(min-width:768px){.below-grid{grid-template-columns:1.2fr 0.8fr}}.subpanel{padding:14px}.subpanel h3{margin:0 0 10px;font-size:15px}.muted{color:var(--muted)}.small{font-size:12px}.entry{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}.entry:first-of-type{border-top:0}.entry-color{width:3px;border-radius:3px;align-self:stretch;min-height:30px}.entry-main{flex:1;min-width:0}.entry-title{font-weight:700;font-size:13px}.entry-note{font-size:12px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}.entry-value{font-size:12px;font-weight:700;margin-top:2px}.entry-actions{display:flex;gap:3px}.entry-actions button{padding:4px 6px;font-size:11px}.track-grid{display:grid;grid-template-columns:1fr;gap:10px}@media(min-width:640px){.track-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}.track-card{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:0}.track-card-top{display:flex;align-items:flex-start;gap:8px}.track-card h3{font-size:14px;margin:0 0 2px}.track-card p{font-size:11px;color:var(--muted);margin:0}.track-card .track-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.track-actions button{font-size:11px;padding:6px 8px}.pill{font-size:10px;background:#f0f3f7;border-radius:16px;padding:3px 6px;color:#596577;display:inline-block;margin-top:6px}.empty{padding:18px 8px;text-align:center;color:var(--muted);font-size:13px}.viewbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}.form-row{display:grid;grid-template-columns:1fr;gap:10px}@media(min-width:640px){.form-row{grid-template-columns:repeat(2,minmax(0,1fr))}}.field{display:grid;gap:4px;margin-bottom:10px}.field label{font-size:12px;font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid #cbd4df;border-radius:9px;padding:8px 10px;background:white;color:var(--ink);min-width:0;font-size:13px}.field textarea{min-height:80px;resize:vertical}.field .hint{font-size:11px;color:var(--muted)}.modal-backdrop{position:fixed;inset:0;background:#10182780;z-index:20;display:none;align-items:flex-end;justify-content:center;padding:10px}.modal-backdrop.open{display:flex}.modal{width:min(600px,100%);max-height:90vh;overflow:auto;background:white;border-radius:18px;padding:18px;box-shadow:0 12px 40px #0003}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.modal-head h2{font-size:18px;margin:0}.modal-head button{font-size:18px;padding:3px 8px}.modal-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:10px}.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#17212f;color:white;padding:8px 13px;border-radius:10px;z-index:50;display:none;max-width:90vw;font-size:13px}.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:12px}.stat{border:1px solid var(--line);border-radius:10px;padding:9px}.stat strong{display:block;font-size:17px}.stat span{font-size:11px;color:var(--muted)}.list-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.list-row:last-child{border-bottom:0}.list-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}.list-row .grow{flex:1;min-width:0}.strike{text-decoration:line-through;color:var(--muted)}.hidden{display:none!important}
+
+/* Screen-break timer */
+.break-timer{padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;border-radius:12px;background:#f8faff}.break-timer h3{margin:0;font-size:13px}.timer-display{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}.timer-controls{display:flex;gap:5px;flex-wrap:wrap;align-items:center}.timer-controls button{font-size:11px;padding:5px 8px}.timer-status{font-size:11px;color:var(--muted)}.timer-status.ringing{color:#b42318;font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="logo">mT</div><div><h1>myTracker</h1><p>Your life, organized into Tracks.</p></div></div>
+    <div class="top-actions">
+      <button class="ghost" id="exportBtn" title="Export backup">Export</button>
+      <button class="ghost" id="restoreAutoBtn" title="Restore backup">Restore</button>
+      <button class="ghost" id="importBtn" title="Import backup">Import</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="main">
+      <!-- Screen-break timer -->
+      <section class="panel break-timer" aria-label="Screen-break timer">
+        <div>
+          <h3>⏱ Break timer</h3>
+          <div class="timer-status" id="breakTimerStatus">Ready</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="timer-display" id="breakTimerDisplay">20:00</div>
+          <div class="timer-controls">
+            <button class="primary" id="breakTimerStart">▶ Start</button>
+            <button class="ghost" id="breakTimerStopAlarm" hidden>Stop</button>
+            <button class="ghost" id="breakTimerReset">Reset</button>
+          </div>
+        </div>
+      </section>
+      <audio id="breakCustomAudioPlayer" preload="auto"></audio>
+
+      <!-- Horizontal Category Pill Bar -->
+      <div id="categoryPillBar" class="category-pill-bar"></div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="calendar">Calendar</button>
+        <button class="tab" data-tab="tracks">Tracks</button>
+        <button class="tab" data-tab="lists">Lists</button>
+        <button class="tab" data-tab="insights">Overview & Newsfeed</button>
+      </div>
+
+      <!-- Calendar View -->
+      <div id="calendarView">
+        <section class="panel content">
+          <div class="viewbar">
+            <div class="hero-actions">
+              <button class="ghost" id="todayBtn">Today</button>
+              <button class="primary" id="newTrackBtn">＋ New Track</button>
+            </div>
+            <div class="month-controls">
+              <button id="prevMonth" aria-label="Previous month">‹</button>
+              <strong id="monthLabel" style="font-size:14px"></strong>
+              <button id="nextMonth" aria-label="Next month">›</button>
+            </div>
+          </div>
+          <div id="calendarGrid" class="calendar"></div>
+          <p class="small muted" style="margin:10px 2px 0">Tap any date to view or add entries.</p>
+        </section>
+        <div class="below-grid">
+          <section class="panel subpanel">
+            <h3 id="selectedDayTitle">Selected day</h3>
+            <div id="dayEntries"></div>
+            <button class="primary" style="width:100%;margin-top:8px" id="addForDayBtn">＋ Add entry for this day</button>
+          </section>
+          <section class="panel subpanel">
+            <h3>Quick log</h3>
+            <p class="muted small" style="margin-top:-4px">Choose a Track and record a value in seconds.</p>
+            <div id="quickLogArea"></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Tracks View -->
+      <div id="tracksView" class="hidden">
+        <section class="panel content">
+          <div class="viewbar">
+            <div>
+              <h3 style="margin:0">Your Tracks</h3>
+              <p class="muted small" style="margin:2px 0 0">Click Quick Check for 1-tap logging or Log for details.</p>
+            </div>
+            <button class="primary" id="tracksNewBtn">＋ Create Track</button>
+          </div>
+          <div id="trackGrid" class="track-grid"></div>
+        </section>
+      </div>
+
+      <!-- Lists View -->
+      <div id="listsView" class="hidden">
+        <section class="panel content">
+          <div class="viewbar"><div><h3 style="margin:0">Everyday lists</h3><p class="muted small" style="margin:2px 0 0">Grocery list and inventory.</p></div></div>
+          <div class="below-grid" style="margin-top:0">
+            <section class="subpanel" style="padding:0">
+              <h3>Grocery list</h3>
+              <form id="groceryForm" style="display:flex;gap:6px"><input id="groceryInput" placeholder="Add grocery item…" style="flex:1"><button class="primary">Add</button></form>
+              <div id="groceryList" style="margin-top:8px"></div>
+            </section>
+            <section class="subpanel" style="padding:0">
+              <h3>Freezer inventory</h3>
+              <form id="freezerForm">
+                <div class="field"><label for="freezerItem">Item</label><input id="freezerItem" placeholder="e.g., ground beef"></div>
+                <div class="form-row">
+                  <div class="field"><label for="freezerQty">Quantity</label><input id="freezerQty" placeholder="e.g., 1 lb"></div>
+                  <div class="field"><label for="freezerDate">Date stored</label><input id="freezerDate" type="date"></div>
+                </div>
+                <button class="primary" style="width:100%">Add to freezer</button>
+              </form>
+              <div id="freezerList" style="margin-top:8px"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+
+      <!-- Insights & Newsfeed View -->
+      <div id="insightsView" class="hidden">
+        <section class="panel content">
+          <h3 style="margin:0 0 10px">Overview & Feedback Newsfeed</h3>
+          <div id="newsfeedArea" style="margin-bottom:14px"></div>
+          <div id="stats"></div>
+          <h3 style="margin:16px 0 8px">Goals & Targets</h3>
+          <form id="goalForm" style="display:flex;gap:6px;margin-bottom:10px">
+            <input id="goalTitleInput" placeholder="New goal (e.g., Save $200 on dining out)" style="flex:1">
+            <button class="primary">Add Goal</button>
+          </form>
+          <div id="goalList" style="margin-bottom:16px"></div>
+          <h3 style="margin:16px 0 8px">Recent activity</h3>
+          <div id="recentEntries"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <footer class="small muted" style="padding:14px 3px 0;text-align:center">myTracker saves securely on this device.</footer>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head"><h2 id="modalTitle">Add entry</h2><button id="closeModal" aria-label="Close">×</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const today = () => { const d=new Date(); return dateKey(d); };
+const dateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const parseDate = s => {const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)};
+const fmtDate = s => parseDate(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const colors = ['#3b82f6','#16a085','#e59a21','#8b5cf6','#e35d75','#0d9488','#64748b','#b45309','#db2777'];
+const defaults = [
+  {id:'exercise',name:'Exercise',color:'#16a085',tracks:[{id:'exercise-log',name:'Exercise',setup:'sets',unit:'reps',description:'Sets and reps or check.'}]},
+  {id:'budget',name:'Budget',color:'#e59a21',tracks:[{id:'spending',name:'Daily spending',setup:'money',unit:'$',schedule:'monthly',description:'Daily purchases & bills.'}]}
+];
+
+let state, selectedCategory='all', selectedDate=today(), month=parseDate(today()), activeTab='calendar';
+const DATA_KEY='myTrackerData';
+
+function load(){
+  try{
+    const raw=localStorage.getItem(DATA_KEY);
+    if(raw){
+      const s=JSON.parse(raw);
+      if(s && Array.isArray(s.categories)) return s;
+    }
+  }catch(e){}
+  return {categories:structuredClone(defaults),entries:[],groceries:[],freezer:[],goals:[],selectedTrack:'exercise-log'};
+}
+
+state = load();
+if(!Array.isArray(state.goals)) state.goals = [];
+
+function save(){
+  try{
+    localStorage.setItem(DATA_KEY, JSON.stringify(state));
+  }catch(e){toast('Storage full!');}
+}
+
+function allTracks(){return state.categories.flatMap(c=>c.tracks.map(t=>({...t,categoryId:c.id,categoryName:c.name,color:c.color})));}
+function getTrack(id){return allTracks().find(t=>t.id===id);}
+function getCat(id){return state.categories.find(c=>c.id===id);}
+function entriesForDate(date){return state.entries.filter(e=>e.date===date && (selectedCategory==='all'||getTrack(e.trackId)?.categoryId===selectedCategory));}
+function toast(msg){const t=$('#toast');if(!t)return;t.textContent=msg;t.style.display='block';clearTimeout(t.timer);t.timer=setTimeout(()=>t.style.display='none',2500);}
+
+function fmtValue(e){
+  if(e.simple)return '✓';
+  if(e.value===undefined||e.value===null||e.value==='')return '✓';
+  let v=e.value;
+  if(e.setup==='money')return `$${Number(v).toFixed(2)}${e.schedule?` (${e.schedule})`:''}`;
+  if(e.setup==='sets'&&e.sets)return `${e.sets} sets × ${e.reps||v} reps`;
+  return `${v}${e.unit&&e.unit!=='check'?' '+e.unit:''}`;
+}
+
+// Screen-break timer
+let breakTimerDeadline=0, breakTimerInterval=null, breakTimerRunning=false;
+const breakDisplay=$('#breakTimerDisplay'), breakStatus=$('#breakTimerStatus'), breakStart=$('#breakTimerStart'), breakReset=$('#breakTimerReset'), breakStopAlarm=$('#breakTimerStopAlarm');
+function breakFormat(ms){const total=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;}
+function breakRender(){const left=Math.max(0,breakTimerDeadline-Date.now());if(breakDisplay)breakDisplay.textContent=breakFormat(breakTimerRunning?left:20*60000);}
+function breakStartTimer(){breakTimerDeadline=Date.now()+20*60000;breakTimerRunning=true;if(breakStatus)breakStatus.textContent='Running...';if(breakStart)breakStart.textContent='Restart';clearInterval(breakTimerInterval);breakTimerInterval=setInterval(()=>{const left=breakTimerDeadline-Date.now();if(breakDisplay)breakDisplay.textContent=breakFormat(left);if(left<=0){clearInterval(breakTimerInterval);breakTimerRunning=false;if(breakStatus)breakStatus.textContent='Take a break!';toast('Break time!');}},250);breakRender();}
+function breakResetTimer(){clearInterval(breakTimerInterval);breakTimerRunning=false;if(breakStatus)breakStatus.textContent='Ready';if(breakStart)breakStart.textContent='▶ Start';if(breakStopAlarm)breakStopAlarm.hidden=true;breakRender();}
+if(breakStart)breakStart.onclick=breakStartTimer;
+if(breakReset)breakReset.onclick=breakResetTimer;
+breakRender();
+
+function setTab(tab){
+  activeTab=tab;
+  $$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  ['calendar','tracks','lists','insights'].forEach(v=>{
+    const el=$('#'+v+'View');
+    if(el)el.classList.toggle('hidden',v!==tab);
+  });
+  render();
+}
+
+function render(){
+  renderCategoriesBar();
+  renderHeader();
+  renderCalendar();
+  renderDayEntries();
+  renderQuickLog();
+  renderTracks();
+  renderLists();
+  renderInsights();
+}
+
+function renderCategoriesBar(){
+  const bar=$('#categoryPillBar');
+  if(!bar)return;
+  bar.innerHTML='';
+  
+  // 'All' pill
+  const allCount = state.entries.length;
+  const allPill = document.createElement('button');
+  allPill.className='cat-pill'+(selectedCategory==='all'?' active':'');
+  allPill.innerHTML=`<span class="cat-dot" style="background:var(--accent)"></span>All (${allCount})`;
+  allPill.onclick=()=>{selectedCategory='all';render();};
+  bar.append(allPill);
+
+  state.categories.forEach(c=>{
+    const count = state.entries.filter(e=>getTrack(e.trackId)?.categoryId===c.id).length;
+    const pill = document.createElement('button');
+    pill.className='cat-pill'+(selectedCategory===c.id?' active':'');
+    pill.innerHTML=`<span class="cat-dot" style="background:${c.color}"></span>${esc(c.name)} (${count})`;
+    pill.onclick=()=>{selectedCategory=c.id;render();};
+    bar.append(pill);
+  });
+}
+
+function renderHeader(){
+  const lbl=$('#monthLabel');
+  if(lbl)lbl.textContent=month.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+}
+
+function renderCalendar(){
+  const grid=$('#calendarGrid');
+  if(!grid)return;
+  grid.innerHTML='';
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(w=>{
+    const e=document.createElement('div');e.className='weekday';e.textContent=w;grid.append(e);
+  });
+  const first=new Date(month.getFullYear(),month.getMonth(),1,12),start=new Date(first);
+  start.setDate(1-first.getDay());
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const key=dateKey(d),es=entriesForDate(key);
+    const cell=document.createElement('button');
+    cell.className='day'+(d.getMonth()!==month.getMonth()?' outside':'')+(key===today()?' today':'')+(key===selectedDate?' selected':'');
+    let inner=`<div class="day-num"><span>${d.getDate()}</span>${es.length?`<span class="mark" style="background:${getTrack(es[0].trackId)?.color||'#2457d6'}">${es.length}</span>`:''}</div>`;
+    if(es.length){
+      inner+=`<div class="day-items">${es.slice(0,2).map(e=>`<div class="day-item" style="background:${(getTrack(e.trackId)?.color||'#2457d6')}18;color:${getTrack(e.trackId)?.color||'#2457d6'}">${esc((getTrack(e.trackId)?.name||'Track'))}</div>`).join('')}</div>`;
+    }
+    cell.innerHTML=inner;
+    cell.onclick=()=>{selectedDate=key;if(d.getMonth()!==month.getMonth())month=new Date(d.getFullYear(),d.getMonth(),1,12);render();};
+    grid.append(cell);
+  }
+}
+
+function renderDayEntries(){
+  const es=entriesForDate(selectedDate);
+  const titleEl=$('#selectedDayTitle');
+  if(titleEl)titleEl.textContent=fmtDate(selectedDate);
+  const box=$('#dayEntries');
+  if(!box)return;
+  box.innerHTML='';
+  if(!es.length){box.innerHTML='<div class="empty">Nothing logged for this day.</div>';return;}
+  es.forEach(e=>{
+    const t=getTrack(e.trackId),row=document.createElement('div');
+    row.className='entry';
+    row.innerHTML=`<div class="entry-color" style="background:${t?.color||'#64748b'}"></div><div class="entry-main"><div class="entry-title">${esc(t?.name||'Track')}</div><div class="entry-value">${esc(fmtValue(e))}</div>${e.note?`<div class="entry-note">${esc(e.note)}</div>`:''}</div><div class="entry-actions"><button class="ghost" data-edit="${e.id}">Edit</button><button class="ghost" data-delete="${e.id}">×</button></div>`;
+    box.append(row);
+  });
+  box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEntryModal(b.dataset.edit));
+  box.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteEntry(b.dataset.delete));
+}
+
+function renderQuickLog(){
+  const box=$('#quickLogArea');
+  if(!box)return;
+  const tracks=allTracks().filter(t=>selectedCategory==='all'||t.categoryId===selectedCategory);
+  if(!tracks.length){box.innerHTML='<div class="empty">Create a Track first.</div>';return;}
+  box.innerHTML=`<div class="field"><label>Track</label><select id="quickTrack">${tracks.map(t=>`<option value="${t.id}">${esc(t.categoryName)} · ${esc(t.name)}</option>`).join('')}</select></div><div class="field"><label>Value / Note</label><input id="quickVal" placeholder="e.g. 30 mins, $45, done"></div><button class="primary" id="quickSubmit" style="width:100%">Save log</button>`;
+  $('#quickSubmit').onclick=()=>{
+    const tid=$('#quickTrack').value, val=$('#quickVal').value.trim();
+    const t=getTrack(tid);
+    if(!t)return;
+    state.entries.push({id:uid(),trackId:tid,date:selectedDate,setup:t.setup,unit:t.unit,value:val,simple:!val,created:Date.now()});
+    save();render();toast('Logged successfully!');
+    $('#quickVal').value='';
+  };
+}
+
+function renderTracks(){
+  const grid=$('#trackGrid');
+  if(!grid)return;
+  const tracks=allTracks().filter(t=>selectedCategory==='all'||t.categoryId===selectedCategory);
+  grid.innerHTML='';
+  if(!tracks.length){grid.innerHTML='<div class="empty">No Tracks in this category.</div>';return;}
+  tracks.forEach(t=>{
+    const count=state.entries.filter(e=>e.trackId===t.id).length;
+    const card=document.createElement('div');
+    card.className='track-card';
+    card.innerHTML=`<div class="track-card-top"><span class="cat-dot" style="background:${t.color};margin-top:4px"></span><div style="flex:1;min-width:0"><h3>${esc(t.name)}</h3><p>${esc(t.categoryName)} · ${esc(t.description||t.setup)}</p><span class="pill">${count} logs · ${esc(t.setup)}${t.schedule?` · ${t.schedule}`:''}</span></div></div><div class="track-actions"><button class="primary" data-quick-check="${t.id}">✓ Quick Check</button><button class="ghost" data-log="${t.id}">Log…</button><button class="ghost" data-config="${t.id}">Edit setup</button></div>`;
+    grid.append(card);
+  });
+}
+
+// 1-Tap Quick Checkmark from Tracks view
+function quickCheckTrack(trackId){
+  const t=getTrack(trackId);
+  if(!t)return;
+  state.entries.push({id:uid(),trackId,date:selectedDate,setup:t.setup,unit:t.unit,simple:true,created:Date.now()});
+  save();render();
+  toast(`✓ Checked "${t.name}" for today!`);
+}
+
+function renderLists(){
+  const g=$('#groceryList');
+  if(g){
+    g.innerHTML='';
+    if(!state.groceries.length)g.innerHTML='<div class="empty">List is empty.</div>';
+    state.groceries.forEach(item=>{
+      const row=document.createElement('div');row.className='list-row';
+      row.innerHTML=`<input type="checkbox" ${item.done?'checked':''}><div class="grow ${item.done?'strike':''}">${esc(item.name)}</div><button class="ghost">×</button>`;
+      row.querySelector('input').onchange=e=>{item.done=e.target.checked;save();renderLists();};
+      row.querySelector('button').onclick=()=>{state.groceries=state.groceries.filter(x=>x.id!==item.id);save();renderLists();};
+      g.append(row);
+    });
+  }
+  const f=$('#freezerList');
+  if(f){
+    f.innerHTML='';
+    if(!state.freezer.length)f.innerHTML='<div class="empty">Freezer is empty.</div>';
+    state.freezer.forEach(item=>{
+      const row=document.createElement('div');row.className='entry';
+      row.innerHTML=`<div class="entry-main"><div class="entry-title">${esc(item.name)}</div><div class="entry-note">${esc(item.qty||'')} · ${esc(item.date||'')}</div></div><button class="ghost">Used</button>`;
+      row.querySelector('button').onclick=()=>{state.freezer=state.freezer.filter(x=>x.id!==item.id);save();renderLists();};
+      f.append(row);
+    });
+  }
+}
+
+function renderInsights(){
+  const box=$('#stats');
+  if(!box)return;
+  box.innerHTML=`<div class="stat-row"><div class="stat"><strong>${state.entries.length}</strong><span>Total logs</span></div><div class="stat"><strong>${state.goals.length}</strong><span>Active goals</span></div><div class="stat"><strong>${state.categories.length}</strong><span>Categories</span></div></div>`;
+
+  // Newsfeed & Savings Feedback
+  const feed=$('#newsfeedArea');
+  if(feed){
+    let feedHtml='';
+    // Analyze budget / bills for savings
+    const moneyEntries = state.entries.filter(e=>getTrack(e.trackId)?.setup==='money').sort((a,b)=>b.date.localeCompare(a.date));
+    if(moneyEntries.length >= 2){
+      const latest = moneyEntries[0];
+      const previous = moneyEntries.find(e => e.trackId === latest.trackId && e.date < latest.date);
+      if(previous && Number(latest.value) < Number(previous.value)){
+        const diff = Number(previous.value) - Number(latest.value);
+        feedHtml += `<div class="entry" style="background:#eefdf3;padding:8px;border-radius:10px;border:1px solid #a7d7b6"><div class="entry-main"><div class="entry-title" style="color:#16663a">🎉 Bill Savings Alert!</div><div class="entry-note">You spent $${diff.toFixed(2)} less on ${esc(getTrack(latest.trackId)?.name||'Expense')} this month compared to your previous log. Great job!</div></div></div>`;
+      }
+    }
+    // Upcoming expenses prediction based on schedule
+  const recurringTracks = allTracks().filter(t => t.setup === 'money' && t.schedule && t.schedule !== 'none');
+  recurringTracks.forEach(rt => {
+    feedHtml += `<div class="entry" style="background:#fdf8ee;padding:8px;border-radius:10px;border:1px solid #f3d9a7;margin-top:6px"><div class="entry-main"><div class="entry-title" style="color:#8a5800">📅 Upcoming Expense Prediction (${rt.schedule})</div><div class="entry-note">Track: <strong>${esc(rt.name)}</strong> is scheduled on a <em>${rt.schedule}</em> cycle. Keep an eye on upcoming bills!</div></div></div>`;
+  });
+
+    if(!feedHtml) feedHtml = '<div class="muted small">No recent feedback highlights yet. Log regular expenses or set goals to see smart insights here!</div>';
+    feed.innerHTML = feedHtml;
+  }
+
+  // Goals List
+  const goalBox=$('#goalList');
+  if(goalBox){
+    goalBox.innerHTML='';
+    if(!state.goals.length) goalBox.innerHTML='<div class="empty">No goals set yet. Add one above!</div>';
+    state.goals.forEach(g=>{
+      const row=document.createElement('div');
+      row.className='list-row';
+      row.innerHTML=`<input type="checkbox" ${g.completed?'checked':''}><div class="grow ${g.completed?'strike':''}"><strong>${esc(g.title)}</strong></div><button class="ghost">×</button>`;
+      row.querySelector('input').onchange=e=>{
+        g.completed=e.target.checked;
+        save();
+        renderInsights();
+        if(g.completed) toast(`🏆 Goal achieved: "${g.title}"!`);
+      };
+      row.querySelector('button').onclick=()=>{state.goals=state.goals.filter(x=>x.id!==g.id);save();renderInsights();};
+      goalBox.append(row);
+    });
+  }
+
+  const recent=$('#recentEntries');
+  if(recent){
+    recent.innerHTML='';
+    state.entries.slice().sort((a,b)=>(b.date+b.created)-(a.date+a.created)).slice(0,6).forEach(e=>{
+      const t=getTrack(e.trackId),row=document.createElement('div');
+      row.className='entry';
+      row.innerHTML=`<div class="entry-color" style="background:${t?.color||'#64748b'}"></div><div class="entry-main"><div class="entry-title">${esc(t?.name||'Track')} <span class="muted small">· ${esc(fmtDate(e.date))}</span></div><div class="entry-value">${esc(fmtValue(e))}</div></div>`;
+      recent.append(row);
+    });
+    if(!state.entries.length)recent.innerHTML='<div class="empty">No recent activity.</div>';
+  }
+}
+
+// Modal management for Track Creation / Editing
+function openTrackModal(trackId=null){
+  const t = trackId ? getTrack(trackId) : null;
+  const defaultCatId = selectedCategory !== 'all' ? selectedCategory : (state.categories[0]?.id || '');
+  const body = `
+    <form id="trackModalForm">
+      <div class="field"><label>Track Name</label><input id="tName" value="${esc(t?.name||'')}" required placeholder="e.g. Electric Bill, Reading"></div>
+      <div class="field"><label>Category</label><select id="tCat">${state.categories.map(c=>`<option value="${c.id}" ${(t?.categoryId||defaultCatId)===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>
+      <div class="field"><label>Type / Setup</label><select id="tSetup">
+        <option value="check" ${t?.setup==='check'?'selected':''}>Checkmark</option>
+        <option value="money" ${t?.setup==='money'?'selected':''}>Money / Spending ($)</option>
+        <option value="quantity" ${t?.setup==='quantity'?'selected':''}>Quantity</option>
+        <option value="sets" ${t?.setup==='sets'?'selected':''}>Sets & Reps</option>
+      </select></div>
+      <div class="field"><label>Recurrence Schedule (for budget prediction)</label><select id="tSchedule">
+        <option value="none" ${!t?.schedule||t?.schedule==='none'?'selected':''}>None / As needed</option>
+        <option value="weekly" ${t?.schedule==='weekly'?'selected':''}>Weekly</option>
+        <option value="bi-weekly" ${t?.schedule==='bi-weekly'?'selected':''}>Bi-weekly</option>
+        <option value="monthly" ${t?.schedule==='monthly'?'selected':''}>Monthly</option>
+        <option value="bi-monthly" ${t?.schedule==='bi-monthly'?'selected':''}>Bi-monthly</option>
+        <option value="annually" ${t?.schedule==='annually'?'selected':''}>Annually</option>
+      </select></div>
+      <div class="field"><label>Description</label><input id="tDesc" value="${esc(t?.description||'')}" placeholder="Optional details"></div>
+      <div class="modal-actions">
+        ${t ? `<button type="button" class="danger" id="deleteTrackBtn" style="margin-right:auto">Delete</button>` : ''}
+        <button type="button" class="ghost" id="cancelTrack">Cancel</button>
+        <button type="submit" class="primary">${t ? 'Save' : 'Create'}</button>
+      </div>
+    </form>
+  `;
+  
+  openModal(t ? 'Edit Track' : 'Create Track', body, () => {
+    const name = $('#tName').value.trim();
+    const catId = $('#tCat').value;
+    const setup = $('#tSetup').value;
+    const schedule = $('#tSchedule').value;
+    const description = $('#tDesc').value.trim();
+    if(!name) return toast('Enter a name.');
+    
+    if(t){
+      const targetCat = getCat(t.categoryId);
+      const trackObj = targetCat?.tracks.find(x => x.id === t.id);
+      if(trackObj){
+        trackObj.name = name; trackObj.setup = setup; trackObj.schedule = schedule; trackObj.description = description;
+        if(t.categoryId !== catId){
+          targetCat.tracks = targetCat.tracks.filter(x => x.id !== t.id);
+          const newCat = getCat(catId);
+          if(newCat) newCat.tracks.push(trackObj);
+        }
+      }
+      toast('Track updated.');
+    } else {
+      const newTrack = { id: uid(), name, setup, unit: setup==='money'?'$':'check', schedule, description };
+      const cat = getCat(catId);
+      if(cat) cat.tracks.push(newTrack);
+      toast('Track created.');
+    }
+    save(); closeModal(); render();
+  });
+  
+  $('#cancelTrack').onclick = closeModal;
+  if(t){
+    $('#deleteTrackBtn').onclick = () => {
+      if(confirm('Delete this track?')){
+        const cat = getCat(t.categoryId);
+        if(cat) cat.tracks = cat.tracks.filter(x => x.id !== t.id);
+        save(); closeModal(); render(); toast('Track deleted.');
+      }
+    };
+  }
+}
+
+function openEntryModal(entryId=null, trackId=null){
+  const old = entryId ? state.entries.find(e=>e.id===entryId) : null;
+  const t = getTrack(old?.trackId || trackId || state.selectedTrack) || allTracks()[0];
+  if(!t){toast('Create a Track first.');return;}
+  const body = `
+    <form id="entryModalForm">
+      <div class="field"><label>Track</label><select id="eTrack">${allTracks().map(x=>`<option value="${x.id}" ${x.id===t.id?'selected':''}>${esc(x.categoryName)} · ${esc(x.name)}</option>`).join('')}</select></div>
+      <div class="field"><label>Date</label><input id="eDate" type="date" value="${old?.date || selectedDate}" required></div>
+      <div class="field"><label>Value / Amount</label><input id="eVal" value="${esc(old?.value||'')}" placeholder="e.g. 75.00, 30 mins"></div>
+      <div class="field"><label>Note</label><input id="eNote" value="${esc(old?.note||'')}" placeholder="Optional notes"></div>
+      <div class="modal-actions"><button type="button" class="ghost" id="cancelEntry">Cancel</button><button type="submit" class="primary">Save entry</button></div>
+    </form>
+  `;
+  openModal('Log Entry', body, () => {
+    const tid = $('#eTrack').value;
+    const nt = getTrack(tid);
+    const date = $('#eDate').value;
+    const val = $('#eVal').value.trim();
+    const note = $('#eNote').value.trim();
+    if(!date) return toast('Select a date.');
+    
+    const e = { id: old?.id || uid(), trackId: tid, date, setup: nt.setup, value: val, simple: !val, note, created: old?.created || Date.now() };
+    if(old){
+      state.entries = state.entries.map(x=>x.id===old.id ? e : x);
+    } else {
+      state.entries.push(e);
+    }
+    save(); closeModal(); render(); toast('Entry saved.');
+  });
+  $('#cancelEntry').onclick = closeModal;
+}
+
+function openModal(title, bodyHtml, onSave){
+  $('#modalTitle').textContent = title;
+  $('#modalBody').innerHTML = bodyHtml;
+  $('#modalBackdrop').classList.add('open');
+  $('#modalBody').onsubmit = e => { e.preventDefault(); onSave?.(); };
+  $('#closeModal').onclick = closeModal;
+  $('#modalBackdrop').onclick = e => { if(e.target === $('#modalBackdrop')) closeModal(); };
+}
+function closeModal(){ $('#modalBackdrop').classList.remove('open'); }
+function deleteEntry(id){
+  if(!confirm('Delete entry?')) return;
+  state.entries = state.entries.filter(e=>e.id!==id);
+  save(); render(); toast('Entry deleted.');
+}
+function esc(v){ return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Event Delegation for buttons
+document.addEventListener('click', e => {
+  const configBtn = e.target.closest('[data-config]');
+  if(configBtn){ e.preventDefault(); openTrackModal(configBtn.dataset.config); return; }
+  const quickCheckBtn = e.target.closest('[data-quick-check]');
+  if(quickCheckBtn){ e.preventDefault(); quickCheckTrack(quickCheckBtn.dataset.quickCheck); return; }
+  const logBtn = e.target.closest('[data-log]');
+  if(logBtn){ e.preventDefault(); openEntryModal(null, logBtn.dataset.log); return; }
+  const createTrackBtn = e.target.closest('#tracksNewBtn, #newTrackBtn, #addTrackBtn');
+  if(createTrackBtn){ e.preventDefault(); openTrackModal(); return; }
+});
+
+// Top-level button bindings
+$('#todayBtn').onclick = () => { selectedDate=today(); month=parseDate(today()); render(); };
+$('#prevMonth').onclick = () => { month=new Date(month.getFullYear(), month.getMonth()-1, 1, 12); render(); };
+$('#nextMonth').onclick = () => { month=new Date(month.getFullYear(), month.getMonth()+1, 1, 12); render(); };
+$('#addForDayBtn').onclick = () => openEntryModal();
+$$('.tab').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+
+$('#groceryForm').onsubmit = e => {
+  e.preventDefault();
+  const name=$('#groceryInput').value.trim();
+  if(!name)return;
+  state.groceries.push({id:uid(),name,done:false});
+  $('#groceryInput').value=''; save(); renderLists();
+};
+
+$('#freezerForm').onsubmit = e => {
+  e.preventDefault();
+  const name=$('#freezerItem').value.trim();
+  if(!name)return;
+  state.freezer.push({id:uid(),name,qty:$('#freezerQty').value.trim(),date:$('#freezerDate').value});
+  $('#freezerItem').value='';$('#freezerQty').value=''; save(); renderLists();
+};
+
+$('#goalForm').onsubmit = e => {
+  e.preventDefault();
+  const title=$('#goalTitleInput').value.trim();
+  if(!title) return;
+  state.goals.push({id:uid(), title, completed:false});
+  $('#goalTitleInput').value=''; save(); renderInsights(); toast('Goal added!');
+};
+
+$('#exportBtn').onclick = () => {
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url; a.download='myTracker-backup-'+today()+'.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast('Backup exported.');
+};
+$('#importBtn').onclick = () => $('#importFile').click();
+$('#importFile').onchange = e => {
+  if(!e.target.files[0])return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const s=JSON.parse(ev.target.result);
+      if(!s||!Array.isArray(s.categories))throw new Error();
+      state=s; save(); render(); toast('Backup imported successfully.');
+    }catch(err){toast('Invalid backup file.');}
+  };
+  r.readAsText(e.target.files[0]);
+  e.target.value='';
+};
+$('#restoreAutoBtn').onclick = () => { toast('Data is safely saved in this browser.'); };
+
+$('#freezerDate').value = today();
+render();
+});
+</script>
+</body>
+</html>
