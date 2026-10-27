@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#18202b">
+<title>myTracker</title>
+<style>
+:root{--bg:#f4f6f9;--panel:#fff;--ink:#17212f;--muted:#657184;--line:#dfe5ec;--accent:#2457d6;--shadow:0 5px 22px #17212f0d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:9px;padding:8px 11px;background:#e9eef6;color:var(--ink);font-weight:650}
+button.primary{background:var(--accent);color:white}
+button.ghost{background:transparent;border:1px solid var(--line)}
+button.danger{color:#a52c35;background:#fff0f0}
+.app{max-width:1180px;margin:auto;padding:12px 12px 30px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{background:#18202b;color:white;border-radius:11px;width:38px;height:38px;display:grid;place-items:center;font-weight:900;font-size:18px}
+.brand h1{font-size:20px;margin:0;letter-spacing:-.5px}
+.brand p{margin:0;color:var(--muted);font-size:12px}
+.top-actions{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.top-actions button{font-size:11px;padding:6px 8px;font-weight:600;color:var(--muted);background:transparent;border:1px solid transparent}
+.top-actions button:hover{background:#eef1f5;color:var(--ink)}
+
+/* Horizontal Categories Bar Mounted Above Calendar */
+.cat-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 12px;box-shadow:var(--shadow)}
+.cat-bar-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;white-space:nowrap}
+.category-hlist{display:flex;gap:6px;overflow-x:auto;scroll-behavior:smooth;flex:1;padding-bottom:2px}
+.category-hlist::-webkit-scrollbar{height:4px}
+.category-hlist::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.cat-btn{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;background:transparent;padding:6px 10px;border:1px solid transparent;border-radius:8px;font-weight:650;font-size:12px;flex:none}
+.cat-btn.active{background:#f0f4ff;border-color:#dbe5ff;color:var(--accent)}
+.dot{width:9px;height:9px;border-radius:3px;flex:none}
+.cat-btn .count{color:var(--muted);font-size:11px;background:#eef2f8;padding:1px 5px;border-radius:10px;margin-left:2px}
+
+.main{min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.tabs{display:flex;gap:4px;padding:4px;background:#e9edf3;border-radius:10px;margin-bottom:12px;width:max-content;max-width:100%}
+.tab{background:transparent;padding:7px 11px;color:#596577;font-size:13px}
+.tab.active{background:white;box-shadow:0 1px 4px #17212f15;color:var(--ink)}
+.content{padding:14px}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.calendar-head h3{margin:0;font-size:16px}
+.month-controls{display:flex;align-items:center;gap:6px}
+.month-controls button{padding:5px 8px;font-size:12px}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.weekday{text-align:center;font-size:10px;color:var(--muted);font-weight:800;padding:3px 0}
+.day{min-height:85px;border:1px solid var(--line);border-radius:9px;background:white;text-align:left;padding:6px;min-width:0;overflow:hidden}
+.day.outside{opacity:.38;background:#f7f8fa}
+.day.today{border-color:#7899f6;box-shadow:inset 0 0 0 1px #7899f6}
+.day.selected{outline:2px solid var(--accent);outline-offset:1px}
+.day-num{font-size:11px;font-weight:800;display:flex;justify-content:space-between;gap:2px}
+.mark{font-size:9px;color:white;border-radius:4px;padding:1px 3px;white-space:nowrap}
+.day-items{margin-top:4px;display:grid;gap:2px}
+.day-item{font-size:9.5px;line-height:1.15;padding:2px 3px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#edf2ff}
+.simple-mark{font-size:15px;font-weight:900;color:#16865b}
+
+.below-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);gap:12px;margin-top:12px}
+.subpanel{padding:13px}
+.subpanel h3{margin:0 0 10px;font-size:14px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.entry{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}
+.entry:first-of-type{border-top:0}
+.entry-color{width:4px;border-radius:4px;align-self:stretch;min-height:30px}
+.entry-main{flex:1;min-width:0}
+.entry-title{font-weight:750;font-size:13px}
+.entry-note{font-size:12px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.entry-value{font-size:12px;font-weight:750;margin-top:2px}
+.entry-actions{display:flex;gap:4px}
+.entry-actions button{padding:4px 6px;font-size:11px}
+
+.track-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.track-card{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:0}
+.track-card-top{display:flex;align-items:flex-start;gap:8px}
+.track-card h3{font-size:14px;margin:0 0 2px}
+.track-card p{font-size:11px;color:var(--muted);margin:0}
+.track-card .track-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.track-actions button{font-size:11px;padding:5px 8px}
+.pill{font-size:10px;background:#f0f3f7;border-radius:16px;padding:3px 6px;color:#596577;display:inline-block;margin-top:5px}
+.empty{padding:18px 8px;text-align:center;color:var(--muted);font-size:13px}
+.viewbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.toggle{display:flex;gap:3px;background:#eef1f5;border-radius:8px;padding:3px}
+.toggle button{background:transparent;padding:5px 8px;font-size:11px}
+.toggle button.active{background:white;box-shadow:0 1px 3px #0001}
+.form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.field{display:grid;gap:4px;margin-bottom:10px}
+.field label{font-size:12px;font-weight:750}
+.field input,.field select,.field textarea{width:100%;border:1px solid #cbd4df;border-radius:8px;padding:8px 9px;background:white;color:var(--ink);min-width:0;font-size:13px}
+.field textarea{min-height:80px;resize:vertical}
+.field .hint{font-size:11px;color:var(--muted)}
+.modal-backdrop{position:fixed;inset:0;background:#10182780;z-index:20;display:none;align-items:flex-end;justify-content:center;padding:12px}
+.modal-backdrop.open{display:flex}
+.modal{width:min(600px,100%);max-height:90vh;overflow:auto;background:white;border-radius:16px;padding:16px;box-shadow:0 15px 60px #0003}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.modal-head h2{font-size:18px;margin:0}
+.modal-head button{font-size:18px;padding:2px 8px}
+.modal-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:10px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#17212f;color:white;padding:8px 13px;border-radius:10px;z-index:50;display:none;max-width:90vw;font-size:13px}
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:9px}
+.stat strong{display:block;font-size:18px}
+.stat span{font-size:11px;color:var(--muted)}
+.list-row{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.list-row:last-child{border-bottom:0}
+.list-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}
+.list-row .grow{flex:1;min-width:0}
+.strike{text-decoration:line-through;color:var(--muted)}
+.schedule-keypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.schedule-keypad.minutes{grid-template-columns:repeat(2,minmax(0,1fr))}
+.schedule-keypad button{padding:10px 6px;font-size:15px}
+.schedule-keypad button.active{background:#dff5e7;color:#17663a;box-shadow:inset 0 0 0 2px #5fb785}
+.person-choice{padding:8px 7px;font-size:12px;overflow-wrap:anywhere}
+.person-choice.active{background:#e3eafe;color:#244db5;box-shadow:inset 0 0 0 2px #91aaf3}
+.sched-day{min-height:50px;padding:4px 2px;text-align:center}
+.sched-day .day-num{justify-content:center}
+.sched-day.has-appt{background:#eff8f2;border-color:#a7d7b6}
+.sched-day.selected{outline:2px solid var(--accent)}
+.feed-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 11px;margin-bottom:7px;font-size:12px}
+.feed-item.savings{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.feed-item.prediction{background:#fffbe6;border-color:#ffe58f;color:#722ed1}
+.hidden{display:none!important}
+
+@media(max-width:760px){
+  .app{padding:10px 8px 24px}
+  .below-grid{grid-template-columns:1fr}
+  .track-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+
+/* Screen-break timer */
+.break-timer{padding:8px 10px;display:flex;align-items:center;justify-content:flex-end;gap:8px;position:relative;max-width:280px;margin:0 0 10px auto;border-radius:12px;box-shadow:none;background:#f8faff}
+.break-timer .timer-copy{min-width:0}
+.break-timer h3{font-size:11px;white-space:nowrap;margin:0 0 2px}
+.break-timer .timer-display{font-size:20px;margin-top:1px;font-weight:850}
+.break-timer .timer-status{font-size:9.5px;margin-top:1px;max-width:130px}
+.break-timer .timer-options{display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:10;background:white;border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:var(--shadow);width:min(280px,90vw)}
+.break-timer .timer-options.open{display:grid}
+.break-timer .timer-controls{gap:3px;justify-content:flex-end}
+.break-timer .timer-controls button{font-size:10px;padding:5px 7px}
+.break-timer .timer-controls #breakTimerReset,.break-timer .timer-controls #breakTimerTestSound{display:none}
+.timer-settings{font-size:10px;padding:5px 7px!important}
+.timer-status.ringing{color:#b42318;font-weight:800}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="logo">mT</div><div><h1>myTracker</h1><p>Your life, organized into Tracks.</p></div></div>
+    <div class="top-actions">
+      <button class="ghost" id="todayBtn">Go to today</button>
+      <button class="primary" id="newTrackBtn">＋ Track</button>
+      <button class="ghost" id="exportBtn" title="Download backup">Export</button>
+      <button class="ghost" id="restoreAutoBtn" title="Restore auto backup">Restore</button>
+      <button class="ghost" id="importBtn" title="Import backup file">Import</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </header>
+
+  <!-- Horizontal Categories Bar mounted prominently directly above navigation -->
+  <div class="cat-bar-wrap">
+    <span class="cat-bar-label">Categories:</span>
+    <div id="categoryList" class="category-hlist"></div>
+    <button class="ghost" id="manageCategoriesBtn" style="font-size:11px;padding:4px 7px;flex:none">⚙ Categories</button>
+  </div>
+
+  <div class="layout">
+    <main class="main">
+      <section class="panel break-timer" aria-label="Screen-break timer">
+        <div class="timer-copy">
+          <h3>⏱ Break timer</h3>
+          <div class="timer-display" id="breakTimerDisplay" role="timer" aria-live="off">20:00</div>
+          <div class="timer-status" id="breakTimerStatus" aria-live="polite">Ready when you are.</div>
+          <div class="timer-options" id="breakTimerOptions">
+            <label style="font-size:11px">Minutes <input id="breakTimerMinutes" type="number" min="1" max="240" step="1" value="20" inputmode="numeric"></label>
+            <div class="sound-choice"><label for="breakAlarmSound" style="font-size:11px">Alarm sound</label><select id="breakAlarmSound"><option value="chime">Gentle chime</option><option value="bell">Bell</option><option value="double">Double beep</option><option value="pulse">Soft pulse</option><option value="custom">My audio file</option></select></div>
+            <div class="sound-choice" id="breakCustomAudioWrap" hidden><label for="breakCustomAudio" style="font-size:11px">Choose audio</label><input id="breakCustomAudio" type="file" accept="audio/*"></div>
+          </div>
+        </div>
+        <div class="timer-controls"><button class="primary" id="breakTimerStart">▶ Start</button><button class="ghost" id="breakTimerStopAlarm" hidden>Stop alarm</button><button class="ghost timer-settings" id="breakTimerSettings" aria-expanded="false">⚙</button><button class="ghost" id="breakTimerReset">Reset</button><button class="ghost" id="breakTimerTestSound">Test sound</button></div>
+      </section>
+      <audio id="breakCustomAudioPlayer" preload="auto"></audio>
+      
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="calendar">Calendar</button>
+        <button class="tab" data-tab="schedule">Schedule</button>
+        <button class="tab" data-tab="tracks">Tracks</button>
+        <button class="tab" data-tab="lists">Lists</button>
+        <button class="tab" data-tab="insights">Overview & Feed</button>
+      </div>
+
+      <!-- CALENDAR VIEW -->
+      <div id="calendarView">
+        <section class="panel content">
+          <div class="viewbar">
+            <div class="toggle" id="displayToggle"><button data-display="detail" class="active">Detailed</button><button data-display="simple">Simple ✓</button></div>
+            <div class="month-controls"><button id="prevMonth" aria-label="Previous month">‹</button><strong id="monthLabel"></strong><button id="nextMonth" aria-label="Next month">›</button></div>
+          </div>
+          <div id="calendarGrid" class="calendar"></div>
+          <p class="small muted" style="margin:8px 2px 0;font-size:11px">Tap a date to view or add entries. Detailed mode shows amounts; Simple mode shows checkmarks.</p>
+        </section>
+        <div class="below-grid">
+          <section class="panel subpanel"><h3 id="selectedDayTitle">Selected day</h3><div id="dayEntries"></div><button class="primary" style="width:100%;margin-top:8px" id="addForDayBtn">＋ Add entry for this day</button></section>
+          <section class="panel subpanel"><h3>Quick log</h3><p class="muted small" style="margin-top:-6px">Choose a Track and record a value.</p><div id="quickLogArea"></div></section>
+        </div>
+      </div>
+
+      <!-- SCHEDULE VIEW -->
+      <div id="scheduleView" class="hidden">
+        <section class="panel content">
+          <div class="viewbar"><div><h3 style="margin:0">Monthly Appointments</h3><p class="muted small" style="margin:3px 0 0">Tap a person, choose a day, then tap an hour and minute.</p></div><div class="hero-actions"><button class="ghost" id="managePeopleBtn">Manage people</button><button class="primary" id="exportMonthBtn">Export month to Calendar</button></div></div>
+          <div class="form-row" style="align-items:start"><section class="subpanel" style="padding:0"><h3>1. Choose a person</h3><div id="schedulePeople" class="track-grid"></div><button class="ghost" id="addPersonBtn" style="width:100%;margin-top:8px">＋ Add person</button></section><section class="subpanel" style="padding:0"><div class="calendar-head"><h3>2. Choose a day</h3><div class="month-controls"><button id="schedPrevMonth">‹</button><strong id="schedMonthLabel"></strong><button id="schedNextMonth">›</button></div></div><div id="scheduleCalendar" class="calendar"></div></section></div>
+          <section class="subpanel" style="margin-top:14px"><h3>3. Choose a time</h3><div class="small muted" id="scheduleSelectionSummary" style="margin-bottom:8px">Choose a person and date first.</div><div class="form-row"><div><div class="small" style="font-weight:750;margin-bottom:5px">Hour</div><div class="schedule-keypad" id="scheduleHours"></div></div><div><div class="small" style="font-weight:750;margin-bottom:5px">Minutes</div><div class="schedule-keypad minutes" id="scheduleMinutes"></div></div></div><div class="field" style="margin-top:10px"><label for="scheduleLocation">Location (optional)</label><input id="scheduleLocation" placeholder="Address or meeting place"></div><div class="field"><label for="scheduleNotes">Notes (optional)</label><textarea id="scheduleNotes" rows="2" placeholder="Anything to remember"></textarea></div><button class="primary" id="saveScheduleBtn" style="width:100%">Save appointment</button></section>
+          <section class="subpanel" style="margin-top:14px"><h3>Appointments this month</h3><div id="scheduleAppointments"></div></section>
+        </section>
+      </div>
+
+      <!-- TRACKS VIEW -->
+      <div id="tracksView" class="hidden">
+        <section class="panel content">
+          <div class="viewbar">
+            <div><h3 style="margin:0">Your Tracks</h3><p class="muted small" style="margin:2px 0 0">Each Track has its own logging setup. Use single checkmark or open details.</p></div>
+            <button class="primary" id="addTrackBtn">＋ Create Track</button>
+          </div>
+          <div id="trackGrid" class="track-grid"></div>
+        </section>
+      </div>
+
+      <!-- LISTS VIEW -->
+      <div id="listsView" class="hidden">
+        <section class="panel content">
+          <div class="viewbar"><div><h3 style="margin:0">Track shortcuts</h3><p class="muted small" style="margin:2px 0 0">Shortcut to each Track in the active category.</p></div></div>
+          <div id="listsTrackGrid" class="track-grid"></div>
+          <div class="viewbar" style="margin-top:18px"><div><h3 style="margin:0">Everyday lists</h3><p class="muted small" style="margin:2px 0 0">Grocery list and freezer inventory.</p></div></div>
+          <div class="below-grid" style="margin-top:0">
+            <section class="subpanel" style="padding:0"><h3>Grocery list</h3><form id="groceryForm" style="display:flex;gap:6px"><input id="groceryInput" placeholder="Add grocery item…" style="min-width:0;flex:1;border:1px solid var(--line);border-radius:8px;padding:8px"><button class="primary">Add</button></form><div id="groceryList" style="margin-top:8px"></div></section>
+            <section class="subpanel" style="padding:0"><h3>Freezer inventory</h3><form id="freezerForm"><div class="field"><label for="freezerItem">Item</label><input id="freezerItem" placeholder="e.g., ground beef"></div><div class="form-row"><div class="field"><label for="freezerQty">Quantity</label><input id="freezerQty" placeholder="e.g., 1 lb"></div><div class="field"><label for="freezerDate">Date stored</label><input id="freezerDate" type="date"></div></div><button class="primary" style="width:100%">Add to freezer</button></form><div id="freezerList" style="margin-top:8px"></div></section>
+          </div>
+        </section>
+      </div>
+
+      <!-- OVERVIEW & NEWSFEED VIEW -->
+      <div id="insightsView" class="hidden">
+        <section class="panel content">
+          <h3 style="margin:0 0 10px">Your overview</h3>
+          <div id="stats"></div>
+          
+          <h3 style="margin:16px 0 8px">Feedback & Savings Newsfeed</h3>
+          <div id="feedbackNewsfeed"></div>
+
+          <h3 style="margin:16px 0 8px">Recent activity</h3>
+          <div id="recentEntries"></div>
+
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
+            <h3>Bank / receipt text helper</h3>
+            <p class="muted small">Paste copied transaction or receipt text below. Review the preview before adding it to your Budget Track.</p>
+            <div class="field"><label for="pasteText">Copied text</label><textarea id="pasteText" placeholder="Example:&#10;10/24/2026 Grocery Store -42.18&#10;10/24/2026 Gas Station -35.00"></textarea></div>
+            <div class="form-row">
+              <div class="field"><label for="pasteDate">Use date if none found</label><input id="pasteDate" type="date"></div>
+              <div class="field"><label for="pasteMode">Interpretation</label><select id="pasteMode"><option value="auto">Auto (review first)</option><option value="expense">Treat amounts as spending</option></select></div>
+            </div>
+            <button class="ghost" id="parseTextBtn">Preview transactions</button>
+            <div id="parsePreview" style="margin-top:10px"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <footer class="small muted" style="padding:14px 3px 0;text-align:center">myTracker saves locally in your browser. Export backups regularly to keep a copy.</footer>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 id="modalTitle">Add entry</h2><button id="closeModal" aria-label="Close">×</button></div><div id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
+const today = () => { const d=new Date(); return dateKey(d); };
+const dateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const parseDate = s => {const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)};
+const fmtDate = s => parseDate(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const colors = ['#3b82f6','#16a085','#e59a21','#8b5cf6','#e35d75','#0d9488','#64748b','#b45309','#db2777'];
+const defaults = [
+{id:'exercise',name:'Exercise',color:'#16a085',tracks:[{id:'exercise-log',name:'Exercise',setup:'sets',unit:'reps',simpleLabel:'Exercise done',description:'Sets and reps, time, or a simple daily check.'}]},
+{id:'education',name:'Education',color:'#3b82f6',tracks:[{id:'reading',name:'Reading',setup:'quantity',unit:'minutes',simpleLabel:'Reading done',description:'Track reading time or pages.'}]},
+{id:'budget',name:'Budget',color:'#e59a21',tracks:[{id:'spending',name:'Daily spending',setup:'money',unit:'$',simpleLabel:'Spending logged',description:'Daily purchases and transactions.'}]},
+{id:'vehicle',name:'Vehicle',color:'#64748b',tracks:[{id:'vehicle-service',name:'Vehicle maintenance',setup:'maintenance',unit:'miles',simpleLabel:'Service logged',description:'Service dates, odometer, and next due.'}]},
+{id:'household',name:'Household',color:'#8b5cf6',tracks:[{id:'mova',name:'Mova',setup:'check',unit:'check',simpleLabel:'Mova task done',description:'Log a run, cleaning, or other appliance task.'}]},
+{id:'food',name:'Food & Storage',color:'#e35d75',tracks:[{id:'freezer',name:'Freezer storage',setup:'check',unit:'items',simpleLabel:'Freezer updated',description:'Track stored food and quantities.'},{id:'groceries',name:'Grocery list',setup:'check',unit:'items',simpleLabel:'Grocery list updated',description:'Keep a reusable shopping list.'}]},
+{id:'wellness',name:'Wellness',color:'#0d9488',tracks:[{id:'wellness-visits',name:'Wellness visits',setup:'wellness',unit:'visit',simpleLabel:'Wellness visit logged',description:'Appointments, providers, outcomes, follow-up, and cost.'}]},
+];
+let state, selectedCategory='all', selectedDate=today(), month=parseDate(today()), displayMode='detail', activeTab='calendar', parsedTransactions=[];
+const DATA_KEY='myTrackerData', AUTO_BACKUP_KEY='myTrackerDataAutoBackup';
+function fresh(){return {categories:structuredClone(defaults),entries:[],groceries:[],freezer:[],selectedTrack:'exercise-log'};}
+function validTrackerData(s){return !!(s&&Array.isArray(s.categories)&&Array.isArray(s.entries)&&s.categories.every(c=>c&&typeof c==='object'&&Array.isArray(c.tracks)));}
+function saveAutoBackup(raw,reason='before save'){if(!raw)return;try{const parsed=JSON.parse(raw);if(!validTrackerData(parsed))return;localStorage.setItem(AUTO_BACKUP_KEY,JSON.stringify({version:1,savedAt:new Date().toISOString(),reason,data:raw}));}catch(e){}}
+function load(){try{const raw=localStorage.getItem(DATA_KEY);if(raw){const s=JSON.parse(raw);if(validTrackerData(s)){saveAutoBackup(raw,'last known good data');return s;}}}catch(e){}return fresh();}
+state=load();
+if(!state.categories.some(c=>c.id==='wellness'))state.categories.push(structuredClone(defaults.find(c=>c.id==='wellness')));
+if(!state.wellnessProviders)state.wellnessProviders={};
+if(!Array.isArray(state.schedulePeople))state.schedulePeople=[];
+if(!Array.isArray(state.monthlyAppointments))state.monthlyAppointments=[];
+let scheduleDate=today(),scheduleMonth=parseDate(today()),schedulePersonId='',scheduleHour='',scheduleMinute='00';
+
+function save(){try{const previous=localStorage.getItem(DATA_KEY);if(previous)saveAutoBackup(previous,'before saving changes');localStorage.setItem(
